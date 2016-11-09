@@ -280,4 +280,5 @@ t.test(x=smd$stress,y=wgse$stress)
 ```{r}
 t.test(x=sbs$stress,y=wgse$stress)
 ```
+hjsgdsdljfwuegfwijfwhgfdjfgasdfiadfuwjfhiss
 **Anlysis**: The p-value is greater than 0.05, which means these two group are not significant different.
