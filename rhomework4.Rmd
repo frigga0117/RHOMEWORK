@@ -1,0 +1,283 @@
+---
+title: "Rhomework4: Stress Research"
+author: "Ting Yin"
+output: html_document
+---
+
+## Introduction  
+
+### What is it?
+
+This reseach is to analyse and compare the level of stress between different groups (for example: male and female, undergraduates and graduate students) in the University of Rochester. I want to know the distribution of stress among students, and whether the distribution varys across different groups. 
+
+### Why?
+
+In UR, we can find some students very busy and stressful while others leisurely. This makes me wander whether this difference obeys certain laws. which kind people are facing more stress and which kind people facing less? 
+
+### How?
+
+This research is collecting data via questionnaire made by Google Sheet. Several questions are asked to students (subjects) in order to  obtain their basic information and evaluate their stress. For more detail on the questionnaire please see: <https://goo.gl/forms/3V78TEdCjQ14XGQC3>.
+
+
+## Overview 
+
+I chose five classifications to do the research: **gender**, **education level**, **international students or not**, **schools and colleges**, and **learning goals**. 
+
+1. Gender: 
+    + Female 
+    + Male
+
+2. Current education levels: 
+    + Undergraduates 
+    + Graduate students
+ 
+3. International students & not
+
+4. Schools and colleges: 
+    + Arts, Science and Engineering
+    + Eastman School of Music
+    + School of Medicine and Dentistry
+    + School of Nursing
+    + Eastman Institute for Oral Health
+    + Simon Business School
+    + Warner Graduate School of Education
+   
+5. Learning Goals:
+    + Achievements in academic performance
+    + Promotion in soft skills (e.g. Leadership, Social Skills)
+    + Do not have specific goals
+ 
+  
+So far I have collected 33 samples.The following are basic statistics of these subjects (Due to the small volume of the sample set, the analyses to learning goals is not included in this report). 
+```{r, echo=FALSE}
+## pie of gender
+piegender <- c(20,13)
+labelgender <- c("Female","Male")
+pct1 <- round(piegender/sum(piegender)*100)
+labelgender2 <-paste(labelgender," ",pct1,"%")
+pie(piegender,labels=labelgender2,main="Gender")
+```
+
+```{r, echo=FALSE}
+pieedu <- c(30,3)
+labeledu <- c("Graduate students","Undergraduates")
+pct2 <- round(pieedu/sum(pieedu)*100)
+labeledu2 <-paste(labeledu," ",pct2,"%")
+pie(pieedu,labels=labeledu2,main="Education Level")
+```
+
+```{r, echo=FALSE}
+pieinter <- c(29,3)
+labelinter <- c("Yes","No")
+pct3 <- round(pieinter/sum(pieinter)*100)
+labelinter2 <-paste(labelinter," ",pct3,"%")
+pie(pieinter,labels=labelinter2,main="International Students")
+```
+
+```{r, echo=FALSE}
+piecol <- c(10,10,9,4)
+labelcol <- c("Arts, Science & Engineering","Medicine and Dentistry","Simon Business School","Warner")
+pct4 <- round(piecol/sum(piecol)*100)
+labelcol2 <-paste(labelcol," ",pct4,"%")
+pie(piecol,labels=labelcol2,main="Schools and Colleges",cex.axis=0.5)
+```
+
+```{r, echo=FALSE}
+library(viridis)
+library(knitr)
+load("/Users/apple/Desktop/rhomework4/stress.rda")
+hist(stress$stress,main="Stress Histogram",xlab="Levels of stress",xlim=c(0,10),ylim=c(0,10),cex.axis=1,breaks=10)
+```
+
+## Exploratory Analyses
+
+#### Groups - Gender
+
+```{r, echo=FALSE}
+female <- subset(stress, gender=="1")
+male <- subset(stress, gender=="2")
+tmp1 <- list("Female"=female$stress,"Male"=male$stress)
+
+hist(female$stress,main="Stress histogram of Female",xlab="Levels of stress",xlim=c(0,10),ylim=c(0,5),cex.axis=1,breaks=10)
+hist(male$stress,main="Stress histogram of Male",xlab="Levels of stress",xlim=c(0,10),ylim=c(0,5),cex.axis=1,breaks=5)
+```
+
+#### Boxplot
+
+```{r,echo=FALSE}
+boxplot(tmp1,main="Female vs Male",ylab="Stress")
+```
+
+#### Shapiro.test
+
+##### Female
+```{r}
+shapiro.test(female$stress)
+```
+**Anlysis**: The p-value is less than 0.05, which means the stress distribution is not a normal distribution.
+
+##### Male
+```{r}
+shapiro.test(male$stress)
+```
+**Anlysis**: The p-value is greater than 0.05, which means the stress distribution can be seen as a normal distribution.
+
+#### t-Test
+```{r}
+t.test(x=female$stress,y=male$stress)
+```
+**Anlysis**: The p-value is greater than 0.05, which means these two group are not significant different.
+
+#### Groups - Education Level
+```{r,echo=FALSE}
+grad <- subset(stress, education=="1")
+undergrad <- subset(stress,education=="2")
+tmp2 <- list("Graduate Students"=grad$stress,"Undergraduates"=undergrad$stress)
+
+hist(grad$stress,main="Graduate Students",xlab="Levels of stress",xlim=c(0,10),ylim=c(0,10),cex.axis=1,breaks=10)
+hist(undergrad$stress,main="Undergraduates",xlab="Levels of stress",xlim=c(0,10),ylim=c(0,5),cex.axis=1,breaks=4)
+```
+
+#### Boxplot
+```{r,echo=FALSE}
+boxplot(tmp2, main="Graduate Students vs Undergraduates",ylab="stress")
+```
+
+#### Shapiro.test
+
+##### Graduate students
+```{r}
+shapiro.test(grad$stress)
+```
+**Anlysis**: The p-value is less than 0.05, which means the stress distribution is not a normal distribution.
+
+##### Undergraduates
+```{r}
+shapiro.test(undergrad$stress)
+```
+**Anlysis**: The p-value is greater than 0.05, which means the stress distribution can be seen as a normal distribution. However, the current volume of this group is too small to do any analyses.
+
+#### t-Test
+```{r}
+t.test(x=grad$stress,y=undergrad$stress)
+```
+**Anlysis**: The p-value is greater than 0.05, which means these two group are not significant different.
+
+#### Groups - International Students
+```{r,echo=FALSE}
+interyes <- subset(stress,interstudent=="2")
+interno <- subset(stress,interstudent=="1")
+tmp3 <- list("Yes"=interyes$stress,"No"=interno$stress)
+
+hist(interyes$stress,main="International Students",xlab="Levels of stress",xlim=c(0,10),ylim=c(0,10),cex.axis=1,breaks=10)
+hist(interno$stress,main="Non-international Students",xlab="Levels of stress",xlim=c(0,10),ylim=c(0,5),cex.axis=1,breaks=4)
+```
+
+#### Boxplot
+```{r,echo=FALSE}
+boxplot(tmp3, main="International vs Non-international Students",ylab="stress")
+```
+
+#### shapiro.test
+
+##### International students
+```{r}
+shapiro.test(interyes$stress)
+```
+**Anlysis**: The p-value is less than 0.05, which means the stress distribution is not a normal distribution.
+
+##### Non-international students
+```{r}
+shapiro.test(interno$stress)
+```
+**Anlysis**: The p-value is greater than 0.05, which means the stress distribution can be seen as a normal distribution. However, the current volume of this group is too small to do any analyses.
+
+#### t-Test
+```{r}
+t.test(x=interyes$stress,y=interno$stress)
+```
+**Anlysis**: The p-value is greater than 0.05, which means these two group are not significant different.
+
+#### Groups - Schools and Colleges
+
+So far students from four colleges anwered my questionnaire. They are as follows:
+```{r,echo=FALSE}
+ase <- subset(stress,college=="1")
+smd <- subset(stress,college=="2")
+sbs <- subset(stress,college=="3")
+wgse <- subset(stress,college=="4")
+tmp4 <- list("ASE"=ase$stress,"SMD"=smd$stress,"Simon"=sbs$stress,"Education"=wgse$stress)
+
+hist(ase$stress,main="Arts, Science and Engineering",xlab="Levels of stress",xlim=c(0,10),ylim=c(0,5),cex.axis=1,breaks=10)
+hist(smd$stress,main="School of Medicine and Dentistry",xlab="Levels of stress",xlim=c(0,10),ylim=c(0,5),cex.axis=1,breaks=4)
+hist(sbs$stress,main="Simon Business School",xlab="Levels of stress",xlim=c(0,10),ylim=c(0,5),cex.axis=1,breaks=4)
+hist(wgse$stress,main="Warner Graduate School of Education",xlab="Levels of stress",xlim=c(0,10),ylim=c(0,5),cex.axis=1,breaks=4)
+```
+
+#### Boxplot
+```{r,echo=FALSE}
+boxplot(tmp4, main="International vs Non-international Students", ylab="stress",cex.axis=1)
+```
+
+#### shapiro.test
+
+##### Arts, Science and Engineering
+```{r}
+shapiro.test(ase$stress)
+```
+**Anlysis**: The p-value is greater than 0.05, which means the stress distribution can be seen as a normal distribution.
+
+##### School of Medicine and Dentistry
+```{r}
+shapiro.test(smd$stress)
+```
+**Anlysis**: The p-value is greater than 0.05, which means the stress distribution can be seen as a normal distribution.
+
+##### Simon Business School
+```{r}
+shapiro.test(sbs$stress)
+```
+**Anlysis**: The p-value is greater than 0.05, which means the stress distribution can be seen as a normal distribution.
+
+##### Warner Graduate School of Education
+```{r}
+shapiro.test(wgse$stress)
+```
+**Anlysis**: The p-value is greater than 0.05, which means the stress distribution can be seen as a normal distribution.
+
+#### t-Test
+##### Arts, Science and Engineering vs School of Medicine and Dentistry 
+```{r}
+t.test(x=ase$stress,y=smd$stress)
+```
+**Anlysis**: The p-value is greater than 0.05, which means these two group are not significant different.
+
+##### Arts, Science and Engineering vs Simon Business School
+```{r}
+t.test(x=ase$stress,y=sbs$stress)
+```
+**Anlysis**: The p-value is less than 0.05, which means these two group **are significant different**.
+
+##### Arts, Science and Engineering vs Warner Graduate School of Education
+```{r}
+t.test(x=ase$stress,y=wgse$stress)
+```
+**Anlysis**: The p-value is greater than 0.05, which means these two group are not significant different.
+
+##### School of Medicine and Dentistry vs Simon Business School
+```{r}
+t.test(x=smd$stress,y=sbs$stress)
+```
+**Anlysis**: The p-value is greater than 0.05, which means these two group are not significant different.
+
+##### School of Medicine and Dentistry vs Warner Graduate School of Education
+```{r}
+t.test(x=smd$stress,y=wgse$stress)
+```
+**Anlysis**: The p-value is greater than 0.05, which means these two group are not significant different.
+
+##### Simon Business School vs Warner Graduate School of Education
+```{r}
+t.test(x=sbs$stress,y=wgse$stress)
+```
+**Anlysis**: The p-value is greater than 0.05, which means these two group are not significant different.
